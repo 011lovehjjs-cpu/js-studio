@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JS STUDIO</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#120F1C">
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JS STUDIO">
+
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:#120F1C;}
+  body{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#fff;
+    padding:24px; text-align:center;
+  }
+  .mark{
+    width:72px; height:72px; border-radius:20px; background:#fff; color:#120F1C;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:30px; letter-spacing:0.02em; margin-bottom:18px;
+  }
+  .name{font-weight:700; font-size:17px; letter-spacing:0.14em; margin-bottom:28px;}
+  .msg{font-size:13px; color:#A9A2BC; line-height:1.7;}
+  .btn{
+    display:inline-block; margin-top:22px; padding:13px 26px; border-radius:12px;
+    background:#6D48E5; color:#fff; text-decoration:none; font-weight:600; font-size:14px;
+    border:none; cursor:pointer; font-family:inherit;
+  }
+  .spinner{
+    width:26px; height:26px; margin:0 auto 16px;
+    border:3px solid rgba(255,255,255,0.18); border-top-color:#6D48E5;
+    border-radius:50%; animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #manual{display:none;}
+</style>
+</head>
+<body>
+
+<div class="mark">JS</div>
+<div class="name">JS STUDIO</div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="msg">스튜디오를 여는 중…</div>
+</div>
+
+<div id="manual">
+  <div class="msg">자동으로 열리지 않으면<br>아래 버튼을 눌러주세요.</div>
+  <a class="btn" id="go" href="#">스튜디오 열기</a>
+</div>
+
+<script>
+/* ===================================================================
+   여기에 JS STUDIO 웹앱 주소를 넣으세요.
+   Apps Script [배포 관리]에 있는 /exec 로 끝나는 주소입니다.
+   =================================================================== */
+var APP_URL = "https://script.google.com/macros/s/AKfycbyffdGc46H_jHntX_HAr20StcO3I_FGLvlJ20dlaMzNnCdMQizZbeGjWHpg2AmxoKOZ/exec";
+
+document.getElementById('go').href = APP_URL;
+
+if (APP_URL.indexOf('http') === 0) {
+  // 잠깐 로고를 보여준 뒤 웹앱으로 이동
+  setTimeout(function () {
+    location.replace(APP_URL);
+  }, 600);
+  // 3초 안에 안 넘어가면 수동 버튼 표시
+  setTimeout(function () {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('manual').style.display = 'block';
+  }, 3000);
+} else {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('manual').style.display = 'block';
+  document.querySelector('#manual .msg').innerHTML =
+    'index.html 파일에 웹앱 주소를<br>아직 넣지 않았어요.';
+}
+
+// 앱으로 설치하기 위한 최소 서비스워커 등록
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+</script>
+
+</body>
+</html>
