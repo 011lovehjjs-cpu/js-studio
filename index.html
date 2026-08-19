@@ -15,75 +15,111 @@
 
 <style>
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;background:#120F1C;}
+  html,body{margin:0;padding:0;min-height:100%;background:#120F1C;}
   body{
     display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh;
     font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#fff;
-    padding:24px; text-align:center;
+    padding:32px 24px; text-align:center;
   }
-  .mark{
-    width:72px; height:72px; border-radius:20px; background:#fff; color:#120F1C;
-    display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:30px; letter-spacing:0.02em; margin-bottom:18px;
+  .play{
+    width:0; height:0; margin:0 auto 14px;
+    border-left:34px solid #7A54F0;
+    border-top:22px solid transparent;
+    border-bottom:22px solid transparent;
   }
-  .name{font-weight:700; font-size:17px; letter-spacing:0.14em; margin-bottom:28px;}
-  .msg{font-size:13px; color:#A9A2BC; line-height:1.7;}
+  .name{font-weight:800; font-size:19px; letter-spacing:0.16em; margin-bottom:6px;}
+  .tag{font-size:12px; color:#8B84A3; margin-bottom:34px;}
   .btn{
-    display:inline-block; margin-top:22px; padding:13px 26px; border-radius:12px;
-    background:#6D48E5; color:#fff; text-decoration:none; font-weight:600; font-size:14px;
-    border:none; cursor:pointer; font-family:inherit;
+    display:block; width:100%; max-width:300px; margin:0 auto 10px;
+    padding:15px 20px; border-radius:14px; border:none;
+    font-weight:700; font-size:15px; cursor:pointer;
+    font-family:inherit; text-decoration:none; text-align:center;
   }
-  .spinner{
-    width:26px; height:26px; margin:0 auto 16px;
-    border:3px solid rgba(255,255,255,0.18); border-top-color:#6D48E5;
-    border-radius:50%; animation:spin .8s linear infinite;
+  .btn-main{background:#7A54F0; color:#fff;}
+  .btn-sub{background:transparent; color:#B9B2CF; border:1px solid #3A3350;}
+  .hint{
+    max-width:320px; margin:22px auto 0; font-size:12px; color:#8B84A3; line-height:1.8;
+    background:rgba(255,255,255,0.04); border-radius:12px; padding:14px 16px; text-align:left;
   }
-  @keyframes spin{to{transform:rotate(360deg);}}
-  #manual{display:none;}
+  .hint b{color:#D8D3E8;}
+  .ok{color:#67D6B5; font-size:12px; margin-top:8px;}
+  #installWrap{display:none;}
 </style>
 </head>
 <body>
 
-<div class="mark">JS</div>
+<div class="play"></div>
 <div class="name">JS STUDIO</div>
+<div class="tag">프리랜서 영상 관리</div>
 
-<div id="loading">
-  <div class="spinner"></div>
-  <div class="msg">스튜디오를 여는 중…</div>
+<a class="btn btn-main" id="go" href="#">스튜디오 열기</a>
+
+<div id="installWrap">
+  <button class="btn btn-sub" id="install">홈 화면에 앱으로 설치</button>
 </div>
 
-<div id="manual">
-  <div class="msg">자동으로 열리지 않으면<br>아래 버튼을 눌러주세요.</div>
-  <a class="btn" id="go" href="#">스튜디오 열기</a>
-</div>
+<div class="hint" id="hint"></div>
 
 <script>
-/* ===================================================================
-   여기에 JS STUDIO 웹앱 주소를 넣으세요.
-   Apps Script [배포 관리]에 있는 /exec 로 끝나는 주소입니다.
-   =================================================================== */
+/* JS STUDIO 웹앱 주소 */
 var APP_URL = "https://script.google.com/macros/s/AKfycbyffdGc46H_jHntX_HAr20StcO3I_FGLvlJ20dlaMzNnCdMQizZbeGjWHpg2AmxoKOZ/exec";
 
 document.getElementById('go').href = APP_URL;
 
-if (APP_URL.indexOf('http') === 0) {
-  // 잠깐 로고를 보여준 뒤 웹앱으로 이동
-  setTimeout(function () {
-    location.replace(APP_URL);
-  }, 600);
-  // 3초 안에 안 넘어가면 수동 버튼 표시
-  setTimeout(function () {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('manual').style.display = 'block';
-  }, 3000);
+var ua = navigator.userAgent || '';
+var isIOS = /iPad|iPhone|iPod/.test(ua);
+var isSafari = isIOS && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+var standalone = window.matchMedia('(display-mode: standalone)').matches
+              || window.navigator.standalone === true;
+
+var hint = document.getElementById('hint');
+
+if (standalone) {
+  // 이미 앱으로 설치해서 실행한 경우 → 바로 스튜디오로
+  hint.style.display = 'none';
+  setTimeout(function(){ location.replace(APP_URL); }, 400);
+} else if (isIOS) {
+  if (isSafari) {
+    hint.innerHTML = '<b>홈 화면에 추가하는 방법</b><br>'
+      + '① 화면 아래 공유 버튼 <b>↑</b> 누르기<br>'
+      + '② 아래로 내려서 <b>“홈 화면에 추가”</b> 선택<br>'
+      + '③ 오른쪽 위 <b>추가</b> 누르면 완료';
+  } else {
+    hint.innerHTML = '<b>아이폰은 사파리로 열어야 설치돼요.</b><br>'
+      + '주소를 복사해서 사파리에서 다시 열어주세요.';
+  }
 } else {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('manual').style.display = 'block';
-  document.querySelector('#manual .msg').innerHTML =
-    'index.html 파일에 웹앱 주소를<br>아직 넣지 않았어요.';
+  hint.innerHTML = '<b>홈 화면에 추가하는 방법</b><br>'
+    + '아래 <b>“홈 화면에 앱으로 설치”</b> 버튼을 눌러주세요.<br>'
+    + '버튼이 안 보이면 브라우저 메뉴 <b>⋮</b> → <b>“앱 설치”</b>를 눌러주세요.';
 }
 
-// 앱으로 설치하기 위한 최소 서비스워커 등록
+/* 안드로이드 크롬: 설치 버튼 활성화 */
+var deferred = null;
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  deferred = e;
+  document.getElementById('installWrap').style.display = 'block';
+});
+
+document.getElementById('install').addEventListener('click', function () {
+  if (!deferred) return;
+  deferred.prompt();
+  deferred.userChoice.then(function (r) {
+    if (r.outcome === 'accepted') {
+      document.getElementById('installWrap').style.display = 'none';
+      hint.innerHTML = '<b>설치가 시작됐어요.</b><br>홈 화면에서 JS STUDIO 아이콘을 확인해주세요.';
+    }
+    deferred = null;
+  });
+});
+
+window.addEventListener('appinstalled', function () {
+  document.getElementById('installWrap').style.display = 'none';
+  hint.innerHTML = '<b>설치 완료!</b><br>이제 홈 화면 아이콘으로 바로 들어오실 수 있어요.';
+});
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function () {});
 }
