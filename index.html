@@ -123,6 +123,13 @@ window.addEventListener('appinstalled', function () {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function () {});
 }
+
+/* 캐시가 남아 옛 화면이 뜨는 것을 막기 위해, 스튜디오를 열 때마다 새 주소로 요청 */
+document.getElementById('go').addEventListener('click', function (ev) {
+  ev.preventDefault();
+  var sep = APP_URL.indexOf('?') === -1 ? '?' : '&';
+  location.href = APP_URL + sep + 't=' + Date.now();
+});
 </script>
 
 </body>

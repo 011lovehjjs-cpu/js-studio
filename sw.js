@@ -1,15 +1,18 @@
 /* JS STUDIO - 앱 설치를 위한 최소 서비스워커.
-   실제 데이터는 항상 실시간으로 불러오므로 캐시는 사용하지 않습니다. */
+   캐시를 사용하지 않고, 설치 시 이전 캐시를 모두 비웁니다. */
 
 self.addEventListener('install', function (e) {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', function (e) {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(
+    caches.keys().then(function (names) {
+      return Promise.all(names.map(function (n) { return caches.delete(n); }));
+    }).then(function () {
+      return self.clients.claim();
+    })
+  );
 });
 
-self.addEventListener('fetch', function (e) {
-  // 네트워크를 그대로 통과시킴 (캐시 없음)
-  return;
-});
+/* fetch 이벤트를 가로채지 않음 → 항상 최신 내용을 네트워크에서 가져옴 */
