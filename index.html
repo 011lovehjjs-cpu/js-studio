@@ -45,6 +45,14 @@
   .hint b{color:#D8D3E8;}
   .ok{color:#67D6B5; font-size:12px; margin-top:8px;}
   #installWrap{display:none;}
+  /* [추가 2026-11-04] YouTube API 서비스 사용 안내 + 정책 링크 */
+  .about{max-width:340px; margin:28px auto 0; font-size:12px; color:#8B84A3; line-height:1.7;}
+  .yt{display:inline-flex; align-items:center; gap:7px; margin-bottom:8px; color:#D8D3E8; font-weight:600;}
+  .yt i{display:inline-block; width:22px; height:15px; background:#FF0000; border-radius:4px; position:relative;}
+  .yt i:after{content:''; position:absolute; left:8px; top:4px; border-left:7px solid #fff;
+    border-top:4px solid transparent; border-bottom:4px solid transparent;}
+  .links{margin-top:12px; font-size:12.5px;}
+  .links a{color:#B9B2CF; text-decoration:underline; margin:0 6px;}
 </style>
 </head>
 <body>
@@ -60,6 +68,19 @@
 </div>
 
 <div class="hint" id="hint"></div>
+
+<!-- [추가 2026-11-04] YouTube API 서비스 사용 안내 + 개인정보처리방침·약관 링크 -->
+<div class="about">
+  <div class="yt"><i></i>YouTube API 서비스 사용</div>
+  <div>JS STUDIO는 운영자 본인의 유튜브 채널에 영상을 업로드·예약하기 위해 YouTube API 서비스를 사용하는 내부용 도구입니다.</div>
+  <div lang="en" style="margin-top:6px;">JS STUDIO uses YouTube API Services to upload and schedule videos to the owner's own YouTube channel.</div>
+  <div class="links">
+    <a href="privacy.html">개인정보처리방침 (Privacy Policy)</a><br>
+    <a href="terms.html">서비스 약관 (Terms of Service)</a> ·
+    <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube 서비스 약관</a> ·
+    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a>
+  </div>
+</div>
 
 <script>
 /* JS STUDIO 웹앱 주소 */
